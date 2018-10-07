@@ -21,19 +21,21 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         askForPermissions();
-        displayDbContent();
-
         setContentView(R.layout.activity_main);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        displayDbContent();
+    }
+
     private void displayDbContent() {
-        final View content = View.inflate(this,
-                R.layout.activity_main, null);
-
-        TextView textField = content.findViewById(R.id.text_field);
-        textField.setText("TEXT CHANGED!!");
-
-        content.refreshDrawableState();
+        TextView textField = findViewById(R.id.main_text_field);
+        if (textField != null) {
+            textField.setText("TEXT CHANGED!!");
+        }
     }
 
     private void askForPermissions() {
