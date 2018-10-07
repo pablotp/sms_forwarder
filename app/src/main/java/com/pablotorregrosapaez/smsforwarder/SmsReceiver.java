@@ -36,12 +36,6 @@ public class SmsReceiver extends BroadcastReceiver {
                     for (Object aObject : pdu_Objects) {
 
                         currentSMS = getIncomingMessage(aObject, bundle);
-
-//                        String senderNo = currentSMS.getDisplayOriginatingAddress();
-//                        message = currentSMS.getDisplayMessageBody();
-//                        System.out.println(currentSMS);
-//                        System.out.println(message);
-
                         storeMessage(currentSMS, context);
                     }
                     this.abortBroadcast();
