@@ -1,25 +1,20 @@
 package com.pablotorregrosapaez.smsforwarder;
 
-import android.Manifest;
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Observable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
 
 import com.pablotorregrosapaez.smsforwarder.config.AppDatabase;
+import com.pablotorregrosapaez.smsforwarder.factory.AppDatabaseFactory;
 import com.pablotorregrosapaez.smsforwarder.model.Message;
-
-
-import androidx.core.content.ContextCompat;
-import androidx.room.Room;
 
 public class SmsReceiver extends BroadcastReceiver {
 
-    //private SharedPreferences preferences;
+
+
     private Bundle bundle;
     private SmsMessage currentSMS;
 
@@ -53,9 +48,7 @@ public class SmsReceiver extends BroadcastReceiver {
     }
 
     private void storeMessage(SmsMessage smsMessage, Context context) {
-        AppDatabase db = Room.databaseBuilder(context,
-                AppDatabase.class, "db-messages").build();
-
+        AppDatabase db = AppDatabaseFactory.build(context, AppDatabaseFactory.MESSAGES_DB_NAME);
         Message m = new Message(smsMessage.getDisplayMessageBody(), smsMessage.getDisplayOriginatingAddress(), smsMessage.getTimestampMillis());
         new AddUserAsyncTask(db).execute(m);
     }

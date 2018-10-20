@@ -4,26 +4,22 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.TextView;
 
+import com.pablotorregrosapaez.smsforwarder.adapter.ForwardedItemRecyclerViewAdapter;
 import com.pablotorregrosapaez.smsforwarder.config.AppDatabase;
+import com.pablotorregrosapaez.smsforwarder.factory.AppDatabaseFactory;
+import com.pablotorregrosapaez.smsforwarder.fragment.ForwardedItemFragment;
 import com.pablotorregrosapaez.smsforwarder.model.Message;
 
-import java.util.List;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleRegistry;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
-import androidx.room.Room;
+import androidx.recyclerview.widget.RecyclerView;
 
-public class MainActivity extends Activity implements LifecycleOwner {
+public class MainActivity extends Activity implements LifecycleOwner, ForwardedItemFragment.OnListFragmentInteractionListener {
 
     private static final int MY_PERMISSIONS_REQUEST_RECEIVE_SMS = 10;
     private static final int MY_PERMISSIONS_REQUEST_SEND_SMS = 20;
@@ -46,24 +42,18 @@ public class MainActivity extends Activity implements LifecycleOwner {
     }
 
     private void displayDbContent() {
-        final TextView textField = findViewById(R.id.main_text_field);
-        if (textField != null) {
-            AppDatabase db = Room.databaseBuilder(this, AppDatabase.class, "db-messages").build();
-
-            db.messageDao().getAll().observe(this, new Observer<List<Message>>() {
-                @Override
-                public void onChanged(@Nullable List<Message> msg){
-                    if (msg != null) {
-                        msg.forEach(m -> {
-                            String currentText = textField.getText().toString();
-                            currentText += m.getContent() + "\n";
-                            textField.setText(currentText);
-                        });
-
+        RecyclerView fragmentList = findViewById(R.id.forwared_items_fragment);
+        AppDatabase db = AppDatabaseFactory.build(this, AppDatabaseFactory.MESSAGES_DB_NAME);
+        db.messageDao().getAll().observe(this, msg -> {
+            if (msg != null) {
+                msg.forEach(m -> {
+                    if (fragmentList != null) {
+                        ForwardedItemRecyclerViewAdapter adapter = (ForwardedItemRecyclerViewAdapter) fragmentList.getAdapter();
+                        adapter.setData(msg);
                     }
-                }
-            });
-        }
+                });
+            }
+        });
     }
 
     private void askForPermissions() {
@@ -84,5 +74,10 @@ public class MainActivity extends Activity implements LifecycleOwner {
     @Override
     public Lifecycle getLifecycle() {
         return lifecycleRegistry;
+    }
+
+    @Override
+    public void onListFragmentInteraction(Message item) {
+        System.out.println("item pressed");
     }
 }
