@@ -3,6 +3,8 @@ package com.pablotorregrosapaez.smsforwarder.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CheckedTextView;
 import android.widget.TextView;
 
 import com.pablotorregrosapaez.smsforwarder.R;
@@ -41,8 +43,9 @@ public class ForwardedItemRecyclerViewAdapter extends RecyclerView.Adapter<Forwa
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = messages.get(position);
-        holder.mIdView.setText(String.valueOf(messages.get(position).getId()));
-        holder.mContentView.setText(messages.get(position).getContent());
+        holder.mSenderNumberView.setText(String.valueOf(messages.get(position).getSender()));
+        holder.mContentView.setText(shortenContent(messages.get(position).getContent()));
+        holder.mForwardedCheck.setChecked(messages.get(position).getForwardedTo() != null);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,6 +57,14 @@ public class ForwardedItemRecyclerViewAdapter extends RecyclerView.Adapter<Forwa
                 }
             }
         });
+    }
+
+    private String shortenContent(String content) {
+        String shrinkedContent = content.replaceAll("\n", "");
+        if (shrinkedContent.length() > 30) {
+            shrinkedContent = shrinkedContent.substring(0, 30) + "...";
+        }
+        return shrinkedContent;
     }
 
     @Override
@@ -73,15 +84,17 @@ public class ForwardedItemRecyclerViewAdapter extends RecyclerView.Adapter<Forwa
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
+        public final TextView mSenderNumberView;
         public final TextView mContentView;
+        public final CheckBox mForwardedCheck;
         public Message mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.item_number);
+            mSenderNumberView = (TextView) view.findViewById(R.id.sender_number);
             mContentView = (TextView) view.findViewById(R.id.content);
+            mForwardedCheck = (CheckBox) view.findViewById(R.id.forwarded_check);
         }
 
         @Override
