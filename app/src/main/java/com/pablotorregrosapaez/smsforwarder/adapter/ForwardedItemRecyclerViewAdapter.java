@@ -10,6 +10,7 @@ import com.pablotorregrosapaez.smsforwarder.fragment.ForwardedItemFragment.OnLis
 import com.pablotorregrosapaez.smsforwarder.model.Message;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import androidx.recyclerview.widget.DiffUtil;
@@ -66,6 +67,7 @@ public class ForwardedItemRecyclerViewAdapter extends RecyclerView.Adapter<Forwa
 
         messages.clear();
         messages.addAll(newMessages);
+        messages.sort((o1, o2) -> o1.getReceivedAt() < o2.getReceivedAt() ? 1 : -1);
         diffResult.dispatchUpdatesTo(this);
     }
 
