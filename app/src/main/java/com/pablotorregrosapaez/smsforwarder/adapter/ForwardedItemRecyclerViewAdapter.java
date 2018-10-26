@@ -4,7 +4,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CheckedTextView;
 import android.widget.TextView;
 
 import com.pablotorregrosapaez.smsforwarder.R;
@@ -12,7 +11,6 @@ import com.pablotorregrosapaez.smsforwarder.fragment.ForwardedItemFragment.OnLis
 import com.pablotorregrosapaez.smsforwarder.model.Message;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import androidx.recyclerview.widget.DiffUtil;
@@ -45,6 +43,7 @@ public class ForwardedItemRecyclerViewAdapter extends RecyclerView.Adapter<Forwa
         holder.mItem = messages.get(position);
         holder.mSenderNumberView.setText(String.valueOf(messages.get(position).getSender()));
         holder.mContentView.setText(shortenContent(messages.get(position).getContent()));
+        holder.mSimIdView.setText(String.valueOf(messages.get(position).getSimId()));
         holder.mForwardedCheck.setChecked(messages.get(position).getForwardedTo() != null);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -86,6 +85,7 @@ public class ForwardedItemRecyclerViewAdapter extends RecyclerView.Adapter<Forwa
         public final View mView;
         public final TextView mSenderNumberView;
         public final TextView mContentView;
+        public final TextView mSimIdView;
         public final CheckBox mForwardedCheck;
         public Message mItem;
 
@@ -94,6 +94,7 @@ public class ForwardedItemRecyclerViewAdapter extends RecyclerView.Adapter<Forwa
             mView = view;
             mSenderNumberView = (TextView) view.findViewById(R.id.sender_number);
             mContentView = (TextView) view.findViewById(R.id.content);
+            mSimIdView = (TextView) view.findViewById(R.id.sim_id);
             mForwardedCheck = (CheckBox) view.findViewById(R.id.forwarded_check);
         }
 

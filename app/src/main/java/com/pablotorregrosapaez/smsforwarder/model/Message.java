@@ -15,6 +15,9 @@ public class Message {
     @ColumnInfo(name = "sender")
     private String sender;
 
+    @ColumnInfo(name = "sim_id")
+    private int simId;
+
     @ColumnInfo(name = "received_at")
     private long receivedAt;
 
@@ -24,10 +27,11 @@ public class Message {
     @ColumnInfo(name = "forwarded_at")
     private long forwardedAt;
 
-    public Message(String content, String sender, long receivedAt) {
+    public Message(String content, String sender, long receivedAt, int simId) {
         this.content = content;
         this.sender = sender;
         this.receivedAt = receivedAt;
+        this.simId = simId;
     }
 
     public int getId() {
@@ -76,5 +80,13 @@ public class Message {
 
     public void setForwardedAt(long forwardedAt) {
         this.forwardedAt = forwardedAt;
+    }
+
+    public int getSimId() {
+        return simId;
+    }
+
+    public void setSimId(int simId) {
+        this.simId = simId;
     }
 }

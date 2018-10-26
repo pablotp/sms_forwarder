@@ -19,7 +19,18 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/text_margin"
         android:layout_weight="1"
+        android:layout_gravity="center"
         android:textAppearance="@android:style/TextAppearance.DeviceDefault" />
+
+    <TextView
+        android:id="@+id/sim_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/text_margin"
+        android:layout_weight="0"
+        android:layout_gravity="center"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault"
+        android:textStyle="bold" />
 
     <CheckBox
         android:id="@+id/forwarded_check"
@@ -29,5 +40,6 @@
         android:layout_weight="0"
         android:clickable="false"
         android:visibility="visible"
+        android:layout_gravity="center"
         android:focusable="false" />
 </LinearLayout>

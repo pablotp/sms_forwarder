@@ -1,23 +1,22 @@
 package com.pablotorregrosapaez.smsforwarder;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
+import android.telephony.SubscriptionInfo;
+import android.telephony.SubscriptionManager;
 
 import com.pablotorregrosapaez.smsforwarder.config.AppDatabase;
 import com.pablotorregrosapaez.smsforwarder.factory.AppDatabaseFactory;
 import com.pablotorregrosapaez.smsforwarder.model.Message;
 
 public class SmsReceiver extends BroadcastReceiver {
-
-
-
     private Bundle bundle;
     private SmsMessage currentSMS;
-
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -27,11 +26,12 @@ public class SmsReceiver extends BroadcastReceiver {
             if (bundle != null) {
                 Object[] pdu_Objects = (Object[]) bundle.get("pdus");
                 if (pdu_Objects != null) {
-
                     for (Object aObject : pdu_Objects) {
-
+                        SubscriptionManager manager = context.getSystemService(SubscriptionManager.class);
+                        @SuppressLint("MissingPermission") SubscriptionInfo subscriptionInfo = manager
+                                .getActiveSubscriptionInfoForSimSlotIndex(bundle.getInt("slot", -1));
                         currentSMS = getIncomingMessage(aObject, bundle);
-                        storeMessage(currentSMS, context);
+                        storeMessage(currentSMS, subscriptionInfo, context);
                     }
                     this.abortBroadcast();
                 }
@@ -47,9 +47,13 @@ public class SmsReceiver extends BroadcastReceiver {
         return currentSMS;
     }
 
-    private void storeMessage(SmsMessage smsMessage, Context context) {
+    private void storeMessage(SmsMessage smsMessage, SubscriptionInfo subscriptionInfo, Context context) {
         AppDatabase db = AppDatabaseFactory.build(context, AppDatabaseFactory.MESSAGES_DB_NAME);
-        Message m = new Message(smsMessage.getDisplayMessageBody(), smsMessage.getDisplayOriginatingAddress(), smsMessage.getTimestampMillis());
+        Message m = new Message(
+                smsMessage.getDisplayMessageBody(),
+                smsMessage.getDisplayOriginatingAddress(),
+                smsMessage.getTimestampMillis(),
+                subscriptionInfo.getSimSlotIndex() + 1);
         new AddUserAsyncTask(db).execute(m);
     }
 

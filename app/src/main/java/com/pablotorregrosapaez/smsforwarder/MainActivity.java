@@ -24,6 +24,7 @@ public class MainActivity extends Activity implements LifecycleOwner, ForwardedI
     private static final int MY_PERMISSIONS_REQUEST_RECEIVE_SMS = 10;
     private static final int MY_PERMISSIONS_REQUEST_SEND_SMS = 20;
     private static final int MY_PERMISSIONS_REQUEST_READ_SMS = 30;
+    private static final int MY_PERMISSIONS_REQUEST_READ_PHONE_STATE = 40;
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
 
     @Override
@@ -67,6 +68,10 @@ public class MainActivity extends Activity implements LifecycleOwner, ForwardedI
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_SMS}, MY_PERMISSIONS_REQUEST_READ_SMS);
+        }
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, MY_PERMISSIONS_REQUEST_READ_PHONE_STATE);
         }
     }
 
