@@ -11,6 +11,9 @@ import com.pablotorregrosapaez.smsforwarder.factory.AppDatabaseFactory;
 import com.pablotorregrosapaez.smsforwarder.fragment.ForwardedItemFragment;
 import com.pablotorregrosapaez.smsforwarder.model.Message;
 
+import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicReference;
+
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -21,10 +24,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class MainActivity extends Activity implements LifecycleOwner, ForwardedItemFragment.OnListFragmentInteractionListener {
 
-    private static final int MY_PERMISSIONS_REQUEST_RECEIVE_SMS = 10;
-    private static final int MY_PERMISSIONS_REQUEST_SEND_SMS = 20;
-    private static final int MY_PERMISSIONS_REQUEST_READ_SMS = 30;
-    private static final int MY_PERMISSIONS_REQUEST_READ_PHONE_STATE = 40;
+    private static final String[] PERMISSIONS_NEEDED = {
+            Manifest.permission.RECEIVE_SMS,
+            Manifest.permission.READ_SMS,
+            Manifest.permission.SEND_SMS,
+            Manifest.permission.READ_PHONE_STATE
+    };
+    private static final int PERMISSIONS_REQUEST_ID = 10;
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
 
     @Override
@@ -58,21 +64,19 @@ public class MainActivity extends Activity implements LifecycleOwner, ForwardedI
     }
 
     private void askForPermissions() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECEIVE_SMS}, MY_PERMISSIONS_REQUEST_RECEIVE_SMS);
+        if (!hasPermissions(PERMISSIONS_NEEDED)) {
+            ActivityCompat.requestPermissions(this, PERMISSIONS_NEEDED, PERMISSIONS_REQUEST_ID);
         }
+    }
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, MY_PERMISSIONS_REQUEST_SEND_SMS);
-        }
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_SMS}, MY_PERMISSIONS_REQUEST_READ_SMS);
-        }
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, MY_PERMISSIONS_REQUEST_READ_PHONE_STATE);
-        }
+    private boolean hasPermissions(String[] permissionsNeeded) {
+        AtomicReference<Boolean> permissionsGranted = new AtomicReference<>(true);
+        Arrays.asList(permissionsNeeded).forEach(permission -> {
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                permissionsGranted.set(false);
+            }
+        });
+        return permissionsGranted.get();
     }
 
     @NonNull
