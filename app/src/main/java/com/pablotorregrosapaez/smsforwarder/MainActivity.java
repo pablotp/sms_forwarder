@@ -50,7 +50,7 @@ public class MainActivity extends Activity implements LifecycleOwner, ForwardedI
     }
 
     private void displayDbContent() {
-        RecyclerView fragmentList = findViewById(R.id.forwared_items_fragment);
+        RecyclerView fragmentList = findViewById(R.id.forwarded_items_fragment);
         AppDatabase db = AppDatabaseFactory.build(this, AppDatabaseFactory.MESSAGES_DB_NAME);
         db.messageDao().getAll().observe(this, msg -> {
             if (msg != null) {
