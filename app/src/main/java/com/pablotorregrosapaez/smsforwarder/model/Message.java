@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey;
 @Entity
 public class Message {
     @PrimaryKey(autoGenerate = true)
-    private int id;
+    private Long id;
 
     @ColumnInfo(name = "content")
     private String content;
@@ -34,11 +34,11 @@ public class Message {
         this.simId = simId;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

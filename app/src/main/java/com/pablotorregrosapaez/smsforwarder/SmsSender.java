@@ -1,12 +1,18 @@
 package com.pablotorregrosapaez.smsforwarder;
 
-import android.app.Activity;
-import android.os.Bundle;
+import com.pablotorregrosapaez.smsforwarder.config.AppDatabase;
+import com.pablotorregrosapaez.smsforwarder.model.Message;
 
-public class SmsSender extends Activity {
+public class SmsSender {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public SmsSender() {
     }
+
+    public void forwardMessage(AppDatabase db, Message message) {
+        message.setForwardedAt(1);
+        message.setForwardedTo("Someone");
+        db.messageDao().insert(message);
+        System.out.println("Forwared message from: " + message.getSender());
+    }
+
 }

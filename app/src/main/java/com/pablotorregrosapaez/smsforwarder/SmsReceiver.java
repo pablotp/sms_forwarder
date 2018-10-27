@@ -17,10 +17,14 @@ import com.pablotorregrosapaez.smsforwarder.model.Message;
 public class SmsReceiver extends BroadcastReceiver {
     private Bundle bundle;
     private SmsMessage currentSMS;
+    private static final SmsSender smsSender = new SmsSender();
+    private Context receiverContext = null;
+
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        System.out.println("=================================== Something received!! ===================================");
+        System.out.println("SMS Received");
+        receiverContext = context;
         if (intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED")) {
             bundle = intent.getExtras();
             if (bundle != null) {
@@ -28,10 +32,11 @@ public class SmsReceiver extends BroadcastReceiver {
                 if (pdu_Objects != null) {
                     for (Object aObject : pdu_Objects) {
                         SubscriptionManager manager = context.getSystemService(SubscriptionManager.class);
+                        // Permission already checked in the MainActivity
                         @SuppressLint("MissingPermission") SubscriptionInfo subscriptionInfo = manager
                                 .getActiveSubscriptionInfoForSimSlotIndex(bundle.getInt("slot", -1));
                         currentSMS = getIncomingMessage(aObject, bundle);
-                        storeMessage(currentSMS, subscriptionInfo, context);
+                        storeAndForwardMessage(currentSMS, subscriptionInfo);
                     }
                     this.abortBroadcast();
                 }
@@ -47,27 +52,31 @@ public class SmsReceiver extends BroadcastReceiver {
         return currentSMS;
     }
 
-    private void storeMessage(SmsMessage smsMessage, SubscriptionInfo subscriptionInfo, Context context) {
-        AppDatabase db = AppDatabaseFactory.build(context, AppDatabaseFactory.MESSAGES_DB_NAME);
+    private void storeAndForwardMessage(SmsMessage smsMessage, SubscriptionInfo subscriptionInfo) {
+        AppDatabase db = AppDatabaseFactory.build(receiverContext, AppDatabaseFactory.MESSAGES_DB_NAME);
         Message m = new Message(
                 smsMessage.getDisplayMessageBody(),
                 smsMessage.getDisplayOriginatingAddress(),
                 smsMessage.getTimestampMillis(),
                 subscriptionInfo.getSimSlotIndex() + 1);
-        new AddUserAsyncTask(db).execute(m);
+        new StoreAndForwardAsyncTask(db).execute(m);
     }
 
-    private static class AddUserAsyncTask extends AsyncTask<Message, Void, Void> {
+    private class StoreAndForwardAsyncTask extends AsyncTask<Message, Message, Void> {
         private AppDatabase db;
 
-        public AddUserAsyncTask(AppDatabase userDatabase) {
+        public StoreAndForwardAsyncTask(AppDatabase userDatabase) {
             db = userDatabase;
         }
 
         @Override
-        protected Void doInBackground(Message... message) {
-            db.messageDao().insertAll(message);
-            System.out.println("Stored message from: " + message[0].getSender());
+        protected Void doInBackground(Message... messages) {
+            Message message = messages[0];
+            Long messageId = db.messageDao().insert(message);
+            System.out.println("Stored message from: " + message.getSender());
+
+            message.setId(messageId);
+            smsSender.forwardMessage(db, message);
 
             return null;
         }
