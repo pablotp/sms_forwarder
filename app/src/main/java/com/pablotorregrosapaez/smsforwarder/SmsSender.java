@@ -9,7 +9,7 @@ public class SmsSender {
     }
 
     public void forwardMessage(AppDatabase db, Message message) {
-        message.setForwardedAt(1);
+        message.setForwardedAt(System.currentTimeMillis());
         message.setForwardedTo("Someone");
         db.messageDao().insert(message);
         System.out.println("Forwared message from: " + message.getSender());

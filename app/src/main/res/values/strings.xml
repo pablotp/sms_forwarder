@@ -1,3 +1,9 @@
 <resources>
-    <string name="app_name">SmsForwarder</string>
+    <string name="app_name" translatable="false">SmsForwarder</string>
+    <string name="message_id_label">ID:</string>
+    <string name="message_sender_label" translatable="false">Sender:</string>
+    <string name="message_sim_id_label" translatable="false">Sim ID:</string>
+    <string name="message_received_at_label" translatable="false">Received at:</string>
+    <string name="message_forwarded_to_label" translatable="false">Forwarded to:</string>
+    <string name="message_forwarded_at_label" translatable="false">Forwarded at:</string>
 </resources>

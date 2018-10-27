@@ -57,7 +57,7 @@ public class SmsReceiver extends BroadcastReceiver {
         Message m = new Message(
                 smsMessage.getDisplayMessageBody(),
                 smsMessage.getDisplayOriginatingAddress(),
-                smsMessage.getTimestampMillis(),
+                System.currentTimeMillis(),
                 subscriptionInfo.getSimSlotIndex() + 1);
         new StoreAndForwardAsyncTask(db).execute(m);
     }

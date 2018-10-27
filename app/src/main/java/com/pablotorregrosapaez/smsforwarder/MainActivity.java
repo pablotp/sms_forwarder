@@ -2,6 +2,7 @@ package com.pablotorregrosapaez.smsforwarder;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
@@ -87,6 +88,9 @@ public class MainActivity extends Activity implements LifecycleOwner, ForwardedI
 
     @Override
     public void onListFragmentInteraction(Message item) {
+        Intent intent = new Intent(this, MessageDetails.class);
+        intent.putExtra("messageId", item.getId());
+        startActivity(intent);
         System.out.println("item pressed");
     }
 }
