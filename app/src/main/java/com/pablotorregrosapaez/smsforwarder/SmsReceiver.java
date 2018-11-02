@@ -4,8 +4,10 @@ import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.telephony.SmsMessage;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
@@ -17,9 +19,7 @@ import com.pablotorregrosapaez.smsforwarder.model.Message;
 public class SmsReceiver extends BroadcastReceiver {
     private Bundle bundle;
     private SmsMessage currentSMS;
-    private static final SmsSender smsSender = new SmsSender();
     private Context receiverContext = null;
-
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -53,20 +53,24 @@ public class SmsReceiver extends BroadcastReceiver {
     }
 
     private void storeAndForwardMessage(SmsMessage smsMessage, SubscriptionInfo subscriptionInfo) {
-        AppDatabase db = AppDatabaseFactory.build(receiverContext, AppDatabaseFactory.MESSAGES_DB_NAME);
+
         Message m = new Message(
                 smsMessage.getDisplayMessageBody(),
                 smsMessage.getDisplayOriginatingAddress(),
                 System.currentTimeMillis(),
                 subscriptionInfo.getSimSlotIndex() + 1);
-        new StoreAndForwardAsyncTask(db).execute(m);
+        new StoreAndForwardAsyncTask(receiverContext).execute(m);
     }
 
     private class StoreAndForwardAsyncTask extends AsyncTask<Message, Message, Void> {
         private AppDatabase db;
+        private Context context;
+        private SmsSender smsSender;
 
-        public StoreAndForwardAsyncTask(AppDatabase userDatabase) {
-            db = userDatabase;
+        public StoreAndForwardAsyncTask(Context context) {
+            this.context = context;
+            smsSender = new SmsSender(context);
+            db = AppDatabaseFactory.build(context, AppDatabaseFactory.MESSAGES_DB_NAME);
         }
 
         @Override
@@ -77,7 +81,7 @@ public class SmsReceiver extends BroadcastReceiver {
 
             message.setId(messageId);
             smsSender.forwardMessage(db, message);
-
+            
             return null;
         }
     }

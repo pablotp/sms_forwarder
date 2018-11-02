@@ -69,6 +69,9 @@ public class MessageDetailsFragment extends Fragment {
     }
 
     private String formatDate(Long timeInMillis) {
+        if (timeInMillis == null) {
+            return null;
+        }
         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");
         Date resultdate = new Date(timeInMillis);
         return sdf.format(resultdate);
