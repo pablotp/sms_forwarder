@@ -29,7 +29,22 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".MessageDetails"></activity>
+        <activity
+            android:name=".MessageDetails"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.pablotorregrosapaez.smsforwarder.MainActivity" />
+        </activity>
+
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.pablotorregrosapaez.smsforwarder.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Toolbar;
 
 import com.pablotorregrosapaez.smsforwarder.adapter.ForwardedItemRecyclerViewAdapter;
@@ -42,15 +43,26 @@ public class MainActivity extends Activity implements LifecycleOwner, ForwardedI
         super.onCreate(savedInstanceState);
         askForPermissions();
         setContentView(R.layout.activity_main);
-
-        //Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        //setActionBar(myToolbar);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.settings_button:
+                Intent intent = new Intent(this, SettingsActivity.class);
+                this.startActivity(intent);
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
         return true;
     }
 
