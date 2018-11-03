@@ -1,5 +1,6 @@
 package com.pablotorregrosapaez.smsforwarder;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -16,12 +17,15 @@ import android.app.ActionBar;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
+import android.telephony.SubscriptionInfo;
+import android.telephony.SubscriptionManager;
 import android.text.TextUtils;
 import android.view.MenuItem;
 
 import androidx.core.app.NavUtils;
 
 import java.util.List;
+import java.util.stream.Collector;
 
 public class SettingsActivity extends PreferenceActivity {
     private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = (preference, value) -> {
@@ -85,9 +89,27 @@ public class SettingsActivity extends PreferenceActivity {
             addPreferencesFromResource(R.xml.pref_general);
             setHasOptionsMenu(true);
 
+            // Phone number
             Preference preference = findPreference(getString(R.string.pref_key_phone_number));
             bindPreferenceSummaryToValue(preference);
 
+            // Sim list
+            SubscriptionManager subscriptionManager = (SubscriptionManager) this.getContext().getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE);
+            @SuppressLint("MissingPermission") List<SubscriptionInfo> subscriptionInfoList = subscriptionManager.getActiveSubscriptionInfoList();
+            String[] simNames = subscriptionInfoList.stream()
+                    .map(SubscriptionInfo::getDisplayName)
+                    .toArray(String[]::new);
+            String[] simIds = subscriptionInfoList.stream()
+                    .map(SubscriptionInfo::getSubscriptionId)
+                    .map(Object::toString)
+                    .toArray(String[]::new);
+            ListPreference simList = (ListPreference) findPreference(getString(R.string.pref_key_sim_list));
+            simList.setEntries(simNames);
+            simList.setEntryValues(simIds);
+            simList.setDefaultValue("1");
+            bindPreferenceSummaryToValue(simList);
+
+            // Forward all
             Preference button = findPreference(getString(R.string.pref_key_forward_all));
             button.setOnPreferenceClickListener(preference1 -> {
                 System.out.println("Forwarding messages ...");
@@ -107,7 +129,5 @@ public class SettingsActivity extends PreferenceActivity {
             bindPreferenceSummaryToValue(preference);
             preference.setSummary(BuildConfig.VERSION_NAME);
         }
-
-
     }
 }

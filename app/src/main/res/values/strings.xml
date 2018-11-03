@@ -17,6 +17,8 @@
     <string name="pref_key_forward_switch">pref_key_forward_switch</string>
     <string name="pref_title_phone_number">Phone number</string>
     <string name="pref_key_phone_number">pref_key_phone_number</string>
+    <string name="pref_key_sim_list">pref_key_sim_list</string>
+    <string name="pref_title_sim_list">Sim for sending</string>
     <string name="pref_title_forward_all_button">Forward all messages</string>
     <string name="pref_description_forward_all_button">which have not already forwarded.</string>
     <string name="pref_key_forward_all">pref_key_forward_all</string>
