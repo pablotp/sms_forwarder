@@ -8,6 +8,9 @@ import android.telephony.SmsManager;
 import com.pablotorregrosapaez.smsforwarder.config.AppDatabase;
 import com.pablotorregrosapaez.smsforwarder.model.Message;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class SmsSender {
 
     private String forwardTo;
@@ -25,8 +28,8 @@ public class SmsSender {
         }
 
         if (fetchEnabledForwarding()) {
-            SmsManager smsManager = SmsManager.getDefault();
-            smsManager.sendTextMessage(forwardTo, null, "FWD: " + message.getContent(), null, null);
+            SmsManager smsManager = SmsManager.getSmsManagerForSubscriptionId(Integer.parseInt(fetchSimId()));
+            smsManager.sendTextMessage(forwardTo, null, addOriginToContent(message), null, null);
 
             message.setForwardedAt(System.currentTimeMillis());
             message.setForwardedTo(forwardTo);
@@ -36,6 +39,31 @@ public class SmsSender {
         } else {
             System.out.println("Forwarding disabled. The message cannot be forwarded.");
         }
+    }
+
+    private String addOriginToContent(Message message) {
+        String contentWithOrigin = "";
+
+        contentWithOrigin += "Original Sender: " + message.getSender() + "\n";
+        contentWithOrigin += "Received in origin at: " + formatDate(message.getReceivedAt()) + "\n";
+        contentWithOrigin += "---------------------- \n";
+        contentWithOrigin += message.getContent();
+
+        return contentWithOrigin;
+    }
+
+    private String formatDate(Long timeInMillis) {
+        if (timeInMillis == null) {
+            return null;
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");
+        Date resultdate = new Date(timeInMillis);
+        return sdf.format(resultdate);
+    }
+
+    private String fetchSimId() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getString(context.getString(R.string.pref_key_sim_list), "");
     }
 
     private String fetchPhoneNumber() {
