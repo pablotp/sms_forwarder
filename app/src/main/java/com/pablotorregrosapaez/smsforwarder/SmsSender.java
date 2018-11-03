@@ -6,6 +6,7 @@ import android.preference.PreferenceManager;
 import android.telephony.SmsManager;
 
 import com.pablotorregrosapaez.smsforwarder.config.AppDatabase;
+import com.pablotorregrosapaez.smsforwarder.factory.AppDatabaseFactory;
 import com.pablotorregrosapaez.smsforwarder.model.Message;
 
 import java.text.SimpleDateFormat;
@@ -15,13 +16,15 @@ public class SmsSender {
 
     private String forwardTo;
     private Context context;
+    private AppDatabase db;
 
     public SmsSender(Context context) {
         this.context = context;
         forwardTo = fetchPhoneNumber();
+        db = AppDatabaseFactory.build(context, AppDatabaseFactory.MESSAGES_DB_NAME);
     }
 
-    public void forwardMessage(AppDatabase db, Message message) {
+    public void forwardMessage(Message message) {
         if (forwardTo.isEmpty()) {
             System.err.println("Configure a phone number.");
             return;

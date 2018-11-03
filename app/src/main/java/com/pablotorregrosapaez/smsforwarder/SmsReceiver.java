@@ -80,7 +80,7 @@ public class SmsReceiver extends BroadcastReceiver {
             System.out.println("Stored message from: " + message.getSender());
 
             message.setId(messageId);
-            smsSender.forwardMessage(db, message);
+            smsSender.forwardMessage(message);
             
             return null;
         }
