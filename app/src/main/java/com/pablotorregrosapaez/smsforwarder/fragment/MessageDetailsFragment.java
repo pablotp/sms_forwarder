@@ -1,12 +1,16 @@
 package com.pablotorregrosapaez.smsforwarder.fragment;
 
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.pablotorregrosapaez.smsforwarder.R;
+import com.pablotorregrosapaez.smsforwarder.SmsSender;
 import com.pablotorregrosapaez.smsforwarder.config.AppDatabase;
 import com.pablotorregrosapaez.smsforwarder.factory.AppDatabaseFactory;
 import com.pablotorregrosapaez.smsforwarder.model.Message;
@@ -26,6 +30,7 @@ public class MessageDetailsFragment extends Fragment {
     private TextView receivedAtView;
     private TextView forwardedToView;
     private TextView forwardedAtView;
+    private Button forwardNowButton;
 
     public static MessageDetailsFragment newInstance() {
         return new MessageDetailsFragment();
@@ -49,6 +54,7 @@ public class MessageDetailsFragment extends Fragment {
         receivedAtView = this.getActivity().findViewById(R.id.message_received_at);
         forwardedAtView = this.getActivity().findViewById(R.id.message_forwarded_at);
         forwardedToView = this.getActivity().findViewById(R.id.message_forwarded_to);
+        forwardNowButton = this.getActivity().findViewById(R.id.message_forward_now);
 
         long messageId = this.getActivity().getIntent().getLongExtra("messageId", -1);
 
@@ -66,6 +72,7 @@ public class MessageDetailsFragment extends Fragment {
         receivedAtView.setText(formatDate(message.getReceivedAt()));
         forwardedAtView.setText(formatDate(message.getForwardedAt()));
         forwardedToView.setText(message.getForwardedTo());
+        forwardNowButton.setOnClickListener(v -> new ForwardAsyncTask(getContext()).execute(message));
     }
 
     private String formatDate(Long timeInMillis) {
@@ -75,5 +82,24 @@ public class MessageDetailsFragment extends Fragment {
         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");
         Date resultdate = new Date(timeInMillis);
         return sdf.format(resultdate);
+    }
+
+    private class ForwardAsyncTask extends AsyncTask<Message, Message, Void> {
+        private AppDatabase db;
+        private Context context;
+        private SmsSender smsSender;
+
+        public ForwardAsyncTask(Context context) {
+            this.context = context;
+            smsSender = new SmsSender(context);
+            db = AppDatabaseFactory.build(context, AppDatabaseFactory.MESSAGES_DB_NAME);
+        }
+
+        @Override
+        protected Void doInBackground(Message... messages) {
+            Message message = messages[0];
+            smsSender.forwardMessage(message);
+            return null;
+        }
     }
 }

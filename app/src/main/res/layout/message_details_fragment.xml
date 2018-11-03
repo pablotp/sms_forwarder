@@ -124,15 +124,28 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="16dp">
 
         <TextView
             android:id="@+id/message_content"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:background="@color/backgroundContent"
             android:padding="10dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <Button
+            android:id="@+id/message_forward_now"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/message_forward_now_label" />
     </LinearLayout>
 </LinearLayout>

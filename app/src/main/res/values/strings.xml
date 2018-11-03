@@ -6,6 +6,7 @@
     <string name="message_received_at_label" translatable="false">Received at:</string>
     <string name="message_forwarded_to_label" translatable="false">Forwarded to:</string>
     <string name="message_forwarded_at_label" translatable="false">Forwarded at:</string>
+    <string name="message_forward_now_label" translatable="false">Forward Now</string>
     <string name="title_activity_settings">Settings</string>
 
     <!-- Strings related to Settings -->
