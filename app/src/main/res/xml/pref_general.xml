@@ -16,8 +16,4 @@
     <ListPreference
         android:key="@string/pref_key_sim_list"
         android:title="@string/pref_title_sim_list" />
-
-    <Preference android:title="@string/pref_title_forward_all_button"
-        android:key="@string/pref_key_forward_all"
-        android:summary="@string/pref_description_forward_all_button" />
 </PreferenceScreen>

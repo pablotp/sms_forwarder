@@ -2,30 +2,17 @@ package com.pablotorregrosapaez.smsforwarder;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.app.ActionBar;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.preference.RingtonePreference;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
-import android.text.TextUtils;
-import android.view.MenuItem;
-
-import androidx.core.app.NavUtils;
 
 import java.util.List;
-import java.util.stream.Collector;
 
 public class SettingsActivity extends PreferenceActivity {
     private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = (preference, value) -> {
@@ -45,20 +32,6 @@ public class SettingsActivity extends PreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    }
-
-    private String getAppVersion() {
-        PackageInfo pInfo = null;
-        try {
-            pInfo = this.getPackageManager().getPackageInfo(getPackageName(), 0);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        if (pInfo != null) {
-            return pInfo.versionName;
-        } else {
-            return "";
-        }
     }
 
     @Override
@@ -108,13 +81,6 @@ public class SettingsActivity extends PreferenceActivity {
             simList.setEntryValues(simIds);
             simList.setDefaultValue("1");
             bindPreferenceSummaryToValue(simList);
-
-            // Forward all
-            Preference button = findPreference(getString(R.string.pref_key_forward_all));
-            button.setOnPreferenceClickListener(preference1 -> {
-                System.out.println("Forwarding messages ...");
-                return true;
-            });
         }
     }
 
