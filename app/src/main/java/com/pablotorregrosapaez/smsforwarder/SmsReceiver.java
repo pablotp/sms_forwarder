@@ -4,10 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.telephony.SmsMessage;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
@@ -28,16 +26,14 @@ public class SmsReceiver extends BroadcastReceiver {
         if (intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED")) {
             bundle = intent.getExtras();
             if (bundle != null) {
-                Object[] pdu_Objects = (Object[]) bundle.get("pdus");
-                if (pdu_Objects != null) {
-                    for (Object aObject : pdu_Objects) {
-                        SubscriptionManager manager = context.getSystemService(SubscriptionManager.class);
-                        // Permission already checked in the MainActivity
-                        @SuppressLint("MissingPermission") SubscriptionInfo subscriptionInfo = manager
-                                .getActiveSubscriptionInfoForSimSlotIndex(bundle.getInt("slot", -1));
-                        currentSMS = getIncomingMessage(aObject, bundle);
-                        storeAndForwardMessage(currentSMS, subscriptionInfo);
-                    }
+                Object[] pduObjects = (Object[]) bundle.get("pdus");
+
+                if (pduObjects != null) {
+                    String body = getSmsBody(pduObjects, bundle);
+                    String originAddress = getOriginAddres(pduObjects, bundle);
+                    int simSlot = getSimSlot(context);
+                    Message message = buildMessage(body, originAddress, simSlot);
+                    storeAndForwardMessage(message);
                     this.abortBroadcast();
                 }
             }
@@ -52,14 +48,51 @@ public class SmsReceiver extends BroadcastReceiver {
         return currentSMS;
     }
 
-    private void storeAndForwardMessage(SmsMessage smsMessage, SubscriptionInfo subscriptionInfo) {
+    private String getSmsBody(Object[] pdus, Bundle bundle) {
+        SmsMessage[] messages = new SmsMessage[pdus.length];
+        String format = bundle.getString("format");
+        String body = "";
 
-        Message m = new Message(
-                smsMessage.getDisplayMessageBody(),
-                smsMessage.getDisplayOriginatingAddress(),
+        for (int i = 0; i < pdus.length; i++) {
+            messages[i] = SmsMessage.createFromPdu((byte[]) pdus[i], format);
+        }
+
+        SmsMessage sms = messages[0];
+        if (messages.length == 1 || sms.isReplace()) {
+            body = sms.getDisplayMessageBody();
+        } else {
+            StringBuilder bodyText = new StringBuilder();
+            for (int i = 0; i < messages.length; i++) {
+                bodyText.append(messages[i].getMessageBody());
+            }
+            body = bodyText.toString();
+        }
+        return body;
+    }
+
+    private String getOriginAddres(Object[] pdus, Bundle bundle) {
+        String format = bundle.getString("format");
+        return SmsMessage.createFromPdu((byte[]) pdus[0], format).getDisplayOriginatingAddress();
+    }
+
+    private int getSimSlot(Context context) {
+        SubscriptionManager manager = context.getSystemService(SubscriptionManager.class);
+        // Permission already checked in the MainActivity
+        @SuppressLint("MissingPermission") SubscriptionInfo subscriptionInfo = manager
+                .getActiveSubscriptionInfoForSimSlotIndex(bundle.getInt("slot", -1));
+        return subscriptionInfo.getSimSlotIndex();
+    }
+
+    private Message buildMessage(String body, String originAddress, int simIndex) {
+        return new Message(
+                body,
+                originAddress,
                 System.currentTimeMillis(),
-                subscriptionInfo.getSimSlotIndex() + 1);
-        new StoreAndForwardAsyncTask(receiverContext).execute(m);
+                simIndex + 1);
+    }
+
+    private void storeAndForwardMessage(Message message) {
+        new StoreAndForwardAsyncTask(receiverContext).execute(message);
     }
 
     private class StoreAndForwardAsyncTask extends AsyncTask<Message, Message, Void> {
@@ -81,7 +114,7 @@ public class SmsReceiver extends BroadcastReceiver {
 
             message.setId(messageId);
             smsSender.forwardMessage(message);
-            
+
             return null;
         }
     }

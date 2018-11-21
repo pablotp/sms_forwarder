@@ -10,7 +10,9 @@ import com.pablotorregrosapaez.smsforwarder.factory.AppDatabaseFactory;
 import com.pablotorregrosapaez.smsforwarder.model.Message;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class SmsSender {
 
@@ -32,7 +34,9 @@ public class SmsSender {
 
         if (fetchEnabledForwarding()) {
             SmsManager smsManager = SmsManager.getSmsManagerForSubscriptionId(Integer.parseInt(fetchSimId()));
-            smsManager.sendTextMessage(forwardTo, null, addOriginToContent(message), null, null);
+            // Use multipart sending for making sure that long sms are properly forwarded
+            ArrayList<String> parts = smsManager.divideMessage(addOriginToContent(message));
+            smsManager.sendMultipartTextMessage(forwardTo, null, parts, null, null);
 
             message.setForwardedAt(System.currentTimeMillis());
             message.setForwardedTo(forwardTo);
