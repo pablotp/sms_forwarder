@@ -24,4 +24,15 @@
     <string name="pref_header_about">About</string>
     <string name="pref_title_app_version">App Version</string>
     <string name="pref_key_app_version">pref_key_app_version</string>
+
+    <string name="pref_header_gmail">GMail</string>
+    <string name="pref_title_gmail_forward">Enable GMail forwarding</string>
+    <string name="pref_description_gmail_forward">All received messages will be forwarded to the
+        configured GMail account.
+    </string>
+    <string name="pref_key_gmail_forward_switch">pref_key_gmail_forward_switch</string>
+    <string name="pref_title_gmail_username">Username (email)</string>
+    <string name="pref_key_gmail_username">pref_key_gmail_username</string>
+    <string name="pref_title_gmail_password">Password</string>
+    <string name="pref_key_gmail_password">pref_key_gmail_password</string>
 </resources>

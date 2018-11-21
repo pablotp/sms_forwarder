@@ -1,0 +1,23 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="@string/pref_key_gmail_forward_switch"
+        android:summary="@string/pref_description_gmail_forward"
+        android:title="@string/pref_title_gmail_forward" />
+
+    <EditTextPreference
+        android:inputType="text"
+        android:key="@string/pref_key_gmail_username"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_title_gmail_username" />
+
+    <EditTextPreference
+        android:inputType="textVisiblePassword"
+        android:key="@string/pref_key_gmail_password"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:title="@string/pref_title_gmail_password"
+        />
+</PreferenceScreen>

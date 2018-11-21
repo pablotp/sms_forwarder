@@ -17,9 +17,22 @@ import java.util.List;
 public class SettingsActivity extends PreferenceActivity {
     private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = (preference, value) -> {
         String stringValue = value.toString();
+        if (preference.getContext().getString(R.string.pref_key_gmail_password).equals(preference.getKey())) {
+            stringValue = toStars(stringValue);
+        }
         preference.setSummary(stringValue);
         return true;
     };
+
+    static String toStars(String text) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < text.length(); i++) {
+            sb.append('*');
+        }
+        text = sb.toString();
+        return text;
+
+    }
 
     private static void bindPreferenceSummaryToValue(Preference preference) {
         preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
@@ -52,6 +65,7 @@ public class SettingsActivity extends PreferenceActivity {
     protected boolean isValidFragment(String fragmentName) {
         return PreferenceFragment.class.getName().equals(fragmentName)
                 || GeneralPreferenceFragment.class.getName().equals(fragmentName)
+                || GmailPreferenceFragment.class.getName().equals(fragmentName)
                 || AboutPreferenceFragment.class.getName().equals(fragmentName);
     }
 
@@ -81,6 +95,23 @@ public class SettingsActivity extends PreferenceActivity {
             simList.setEntryValues(simIds);
             simList.setDefaultValue("1");
             bindPreferenceSummaryToValue(simList);
+        }
+    }
+
+    public static class GmailPreferenceFragment extends PreferenceFragment {
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            addPreferencesFromResource(R.xml.pref_gmail);
+            setHasOptionsMenu(true);
+
+            // Username
+            Preference preference = findPreference(getString(R.string.pref_key_gmail_username));
+            bindPreferenceSummaryToValue(preference);
+
+            // Password
+            preference = findPreference(getString(R.string.pref_key_gmail_password));
+            bindPreferenceSummaryToValue(preference);
         }
     }
 

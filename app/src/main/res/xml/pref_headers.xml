@@ -7,9 +7,14 @@
         android:icon="@drawable/ic_pref_general"
         android:title="@string/pref_header_general" />
 
+
+    <header
+        android:fragment="com.pablotorregrosapaez.smsforwarder.SettingsActivity$GmailPreferenceFragment"
+        android:icon="@drawable/ic_pref_gmail"
+        android:title="@string/pref_header_gmail" />
+
     <header
         android:fragment="com.pablotorregrosapaez.smsforwarder.SettingsActivity$AboutPreferenceFragment"
         android:icon="@drawable/ic_info_black_24dp"
         android:title="@string/pref_header_about" />
-
 </preference-headers>
