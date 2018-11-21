@@ -33,7 +33,9 @@ public class MainActivity extends Activity implements LifecycleOwner, ForwardedI
             Manifest.permission.RECEIVE_SMS,
             Manifest.permission.READ_SMS,
             Manifest.permission.SEND_SMS,
-            Manifest.permission.READ_PHONE_STATE
+            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.ACCESS_NETWORK_STATE, // TODO ask for this permissions only when Gmail forwarding is enabled
+            Manifest.permission.INTERNET
     };
     private static final int PERMISSIONS_REQUEST_ID = 10;
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);

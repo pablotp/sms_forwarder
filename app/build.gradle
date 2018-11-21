@@ -1,5 +1,9 @@
 apply plugin: 'com.android.application'
 
+repositories {
+    maven { url "https://jitpack.io" }
+}
+
 android {
     compileSdkVersion 28
     defaultConfig {
@@ -52,4 +56,6 @@ dependencies {
     annotationProcessor "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-reactivestreams:$lifecycle_version"
     testImplementation "androidx.arch.core:core-testing:$lifecycle_version"
+    // Gmail sender
+    implementation 'com.github.yesidlazaro:GmailBackground:1.2.0'
 }

@@ -99,10 +99,12 @@ public class SmsReceiver extends BroadcastReceiver {
         private AppDatabase db;
         private Context context;
         private SmsSender smsSender;
+        private MailSender mailSender;
 
         public StoreAndForwardAsyncTask(Context context) {
             this.context = context;
             smsSender = new SmsSender(context);
+            mailSender = new MailSender(context);
             db = AppDatabaseFactory.build(context, AppDatabaseFactory.MESSAGES_DB_NAME);
         }
 
@@ -114,6 +116,7 @@ public class SmsReceiver extends BroadcastReceiver {
 
             message.setId(messageId);
             smsSender.forwardMessage(message);
+            mailSender.forwardMessage(message);
 
             return null;
         }

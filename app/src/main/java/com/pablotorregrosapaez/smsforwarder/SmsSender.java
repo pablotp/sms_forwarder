@@ -8,11 +8,9 @@ import android.telephony.SmsManager;
 import com.pablotorregrosapaez.smsforwarder.config.AppDatabase;
 import com.pablotorregrosapaez.smsforwarder.factory.AppDatabaseFactory;
 import com.pablotorregrosapaez.smsforwarder.model.Message;
+import com.pablotorregrosapaez.smsforwarder.utils.MessageBodyUtils;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 public class SmsSender {
 
@@ -35,7 +33,7 @@ public class SmsSender {
         if (fetchEnabledForwarding()) {
             SmsManager smsManager = SmsManager.getSmsManagerForSubscriptionId(Integer.parseInt(fetchSimId()));
             // Use multipart sending for making sure that long sms are properly forwarded
-            ArrayList<String> parts = smsManager.divideMessage(addOriginToContent(message));
+            ArrayList<String> parts = smsManager.divideMessage(MessageBodyUtils.addOriginToContent(message));
             smsManager.sendMultipartTextMessage(forwardTo, null, parts, null, null);
 
             message.setForwardedAt(System.currentTimeMillis());
@@ -46,26 +44,6 @@ public class SmsSender {
         } else {
             System.out.println("Forwarding disabled. The message cannot be forwarded.");
         }
-    }
-
-    private String addOriginToContent(Message message) {
-        String contentWithOrigin = "";
-
-        contentWithOrigin += "Original Sender: " + message.getSender() + "\n";
-        contentWithOrigin += "Received in origin at: " + formatDate(message.getReceivedAt()) + "\n";
-        contentWithOrigin += "---------------------- \n";
-        contentWithOrigin += message.getContent();
-
-        return contentWithOrigin;
-    }
-
-    private String formatDate(Long timeInMillis) {
-        if (timeInMillis == null) {
-            return null;
-        }
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");
-        Date resultdate = new Date(timeInMillis);
-        return sdf.format(resultdate);
     }
 
     private String fetchSimId() {
