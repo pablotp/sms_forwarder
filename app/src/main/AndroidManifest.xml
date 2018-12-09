@@ -45,6 +45,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.pablotorregrosapaez.smsforwarder.MainActivity" />
         </activity>
+
+        <!-- Won't work starting on 8.0, therefore the MainActivity has to register it -->
+        <receiver android:name=".BatteryLevelReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BATTERY_LOW"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

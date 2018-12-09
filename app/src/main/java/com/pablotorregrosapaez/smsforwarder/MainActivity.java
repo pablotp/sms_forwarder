@@ -3,12 +3,12 @@ package com.pablotorregrosapaez.smsforwarder;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toolbar;
 
 import com.pablotorregrosapaez.smsforwarder.adapter.ForwardedItemRecyclerViewAdapter;
 import com.pablotorregrosapaez.smsforwarder.config.AppDatabase;
@@ -37,12 +37,18 @@ public class MainActivity extends Activity implements LifecycleOwner, ForwardedI
     };
     private static final int PERMISSIONS_REQUEST_ID = 10;
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
+    private BatteryLevelReceiver batteryLevelReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         askForPermissions();
         setContentView(R.layout.activity_main);
+
+        // Register the low battery receiver
+        batteryLevelReceiver = new BatteryLevelReceiver();
+        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_BATTERY_LOW);
+        registerReceiver(batteryLevelReceiver, intentFilter);
     }
 
     @Override
@@ -116,5 +122,14 @@ public class MainActivity extends Activity implements LifecycleOwner, ForwardedI
         intent.putExtra("messageId", item.getId());
         startActivity(intent);
         System.out.println("item pressed");
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (batteryLevelReceiver != null) {
+            unregisterReceiver(batteryLevelReceiver);
+        }
     }
 }

@@ -16,7 +16,6 @@ import com.pablotorregrosapaez.smsforwarder.model.Message;
 
 public class SmsReceiver extends BroadcastReceiver {
     private Bundle bundle;
-    private SmsMessage currentSMS;
     private Context receiverContext = null;
 
     @Override
@@ -97,11 +96,9 @@ public class SmsReceiver extends BroadcastReceiver {
 
     private class StoreAndForwardAsyncTask extends AsyncTask<Message, Message, Void> {
         private AppDatabase db;
-        private Context context;
         private SmsSender smsSender;
 
         public StoreAndForwardAsyncTask(Context context) {
-            this.context = context;
             smsSender = new SmsSender(context);
             db = AppDatabaseFactory.build(context, AppDatabaseFactory.MESSAGES_DB_NAME);
         }
