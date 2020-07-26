@@ -76,10 +76,20 @@ public class SmsReceiver extends BroadcastReceiver {
 
     private int getSimSlot(Context context) {
         SubscriptionManager manager = context.getSystemService(SubscriptionManager.class);
+        int simSlotIndex = getSimSlotIndex(bundle);
+
         // Permission already checked in the MainActivity
         @SuppressLint("MissingPermission") SubscriptionInfo subscriptionInfo = manager
-                .getActiveSubscriptionInfoForSimSlotIndex(bundle.getInt("slot", -1));
+                .getActiveSubscriptionInfoForSimSlotIndex(simSlotIndex);
         return subscriptionInfo.getSimSlotIndex();
+    }
+
+    private int getSimSlotIndex(Bundle bundle) {
+        int index = bundle.getInt("slot", -1);
+        if (index < 0) {
+            index = bundle.getInt("subscription", -1);
+        }
+        return index;
     }
 
     private Message buildMessage(String body, String originAddress, int simIndex) {
