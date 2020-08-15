@@ -73,7 +73,7 @@ public class SettingsActivity extends PreferenceActivity {
                     .map(SubscriptionInfo::getDisplayName)
                     .toArray(String[]::new);
             String[] simIds = subscriptionInfoList.stream()
-                    .map(SubscriptionInfo::getSubscriptionId)
+                    .map(SubscriptionInfo::getSimSlotIndex)
                     .map(Object::toString)
                     .toArray(String[]::new);
             ListPreference simList = (ListPreference) findPreference(getString(R.string.pref_key_sim_list));

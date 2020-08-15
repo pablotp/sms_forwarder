@@ -87,6 +87,9 @@ public class SmsReceiver extends BroadcastReceiver {
     private int getSimSlotIndex(Bundle bundle) {
         int index = bundle.getInt("slot", -1);
         if (index < 0) {
+            index = bundle.getInt("slot_id", -1);
+        }
+        if (index < 0) {
             index = bundle.getInt("subscription", -1);
         }
         return index;
